@@ -12,6 +12,14 @@ export default async function Todos() {
     const userId = session.user.id;
     const todos = await TodoModal.find({ user: userId });
 
+    // Convert Mongoose documents to plain objects
+    const todosPlain = todos.map(todo => ({
+        _id: todo._id.toString(),      // ObjectId → string
+        todo: todo.todo,
+        isCompleted: todo.isCompleted,
+        user: todo.user.toString(),    // ObjectId → string
+    }));
+
     return (
         <div className="min-h-screen bg-gray-100">
             <UserInfo />
@@ -19,7 +27,7 @@ export default async function Todos() {
             <TodoForm />
             <div className="mt-2 flex justify-center">
                 <div className="grid p-4 gap-6 w-full max-w-md">
-                    {todos.map((data) => (
+                    {todosPlain.map((data) => (
                         <ListItem key={data._id} data={data} />
                     ))}
                 </div>
